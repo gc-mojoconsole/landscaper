@@ -1,0 +1,566 @@
+{
+	"definitions": {},
+	"$schema": "http://json-schema.org/draft-07/schema#", 
+	"$id": "https://example.com/object1653289360.json", 
+	"title": "Root", 
+	"type": "object",
+	"properties": {
+		"folderStructure": {
+			"$id": "folderStructure", 
+			"title": "Folder Structure for grasscutter", 
+			"type": "object",
+			"properties": {
+				"resources": {
+					"$id": "folderStructure/resources", 
+					"title": "Resources Folder Path(Relative)", 
+					"type": "string",
+					"default": "",
+					"pattern": "^.*$"
+				},
+				"data": {
+					"$id": "folderStructure/data", 
+					"title": "Data Folder Path(Relative)", 
+					"type": "string",
+					"default": "",
+					"pattern": "^.*$"
+				},
+				"packets": {
+					"$id": "folderStructure/packets", 
+					"title": "Packets Folder Path(Relative)", 
+					"type": "string",
+					"default": "",
+					"pattern": "^.*$"
+				},
+				"keys": {
+					"$id": "folderStructure/keys", 
+					"title": "Keys Folder Path(Relative)", 
+					"type": "string",
+					"default": "",
+					"pattern": "^.*$"
+				},
+				"scripts": {
+					"$id": "folderStructure/scripts", 
+					"title": "Scripts Folder Path(Relative)", 
+					"type": "string",
+					"default": "",
+					"pattern": "^.*$"
+				},
+				"plugins": {
+					"$id": "folderStructure/plugins", 
+					"title": "Plugins Folder Path(Relative)", 
+					"type": "string",
+					"default": "",
+					"pattern": "^.*$"
+				}
+			}
+		}
+,
+		"databaseInfo": {
+			"$id": "databaseInfo", 
+			"title": "Database Connection URI", 
+			"type": "object",
+			"properties": {
+				"server": {
+					"$id": "databaseInfo/server", 
+					"title": "Server", 
+					"type": "object",
+					"properties": {
+						"connectionUri": {
+							"$id": "databaseInfo/server/connectionUri", 
+							"title": "Connection URI for dispatch server", 
+							"type": "string",
+							"default": "",
+							"pattern": "^.*$"
+						},
+						"collection": {
+							"$id": "databaseInfo/server/collection", 
+							"title": "MongoDB Collection name", 
+							"type": "string",
+							"default": "",
+							"pattern": "^.*$"
+						}
+					}
+				}
+,
+				"game": {
+					"$id": "databaseInfo/game", 
+					"title": "Game", 
+					"type": "object",
+					"properties": {
+						"connectionUri": {
+							"$id": "databaseInfo/game/connectionUri", 
+							"title": "Connectionuri", 
+							"type": "string",
+							"default": "",
+							"pattern": "^.*$"
+						},
+						"collection": {
+							"$id": "databaseInfo/game/collection", 
+							"title": "Collection", 
+							"type": "string",
+							"default": "",
+							"pattern": "^.*$"
+						}
+					}
+				}
+
+			}
+		}
+,
+		"language": {
+			"$id": "language", 
+			"title": "Language", 
+			"type": "object",
+			"properties": {
+				"language": {
+					"$id": "language/language", 
+					"title": "Language option for grasscutter", 
+					"type": "string",
+					"enum": ["en-US","pl-PL", "zh-CN", "zh-TW"]
+				},
+				"fallback": {
+					"$id": "language/fallback", 
+					"title": "Fallback when certain string not found", 
+					"type": "string",
+                    "enum": ["en-US","pl-PL", "zh-CN", "zh-TW"]
+				}
+			}
+		}
+,
+		"account": {
+			"$id": "account", 
+			"title": "Account relative settings", 
+			"type": "object",
+			"properties": {
+				"autoCreate": {
+					"$id": "account/autoCreate", 
+					"title": "Auto create account for new player", 
+					"type": "boolean",
+					"default": true
+				},
+				"defaultPermissions": {
+					"$id": "account/defaultPermissions", 
+					"title": "Default permissions for all player", 
+					"type": "array",
+					"default": []
+				}
+			}
+		}
+,
+		"server": {
+			"$id": "server", 
+			"title": "Server", 
+			"type": "object",
+			"properties": {
+				"debugLevel": {
+					"$id": "server/debugLevel", 
+					"title": "Debug level for grasscutter infos", 
+					"type": "string",
+                    "enum": ["NONE", "ALL", "MISSING"]
+				},
+				"runMode": {
+					"$id": "server/runMode", 
+					"title": "Grasscutter Runmode GAME server only, DISPATCH server only, or HYBRID for both", 
+					"type": "string",
+					"enum": ["HYBRID", "GAME", "DISPATCH"]
+				},
+				"http": {
+					"$id": "server/http", 
+					"title": "Http server configuration", 
+					"type": "object",
+					"properties": {
+						"bindAddress": {
+							"$id": "server/http/bindAddress", 
+							"title": "Local bind address", 
+							"type": "string",
+							"default": "",
+							"pattern": "^.*$"
+						},
+						"accessAddress": {
+							"$id": "server/http/accessAddress", 
+							"title": "Remote access address, set this when you deploy grasscutter remotely or with any kind of forwarding(e.g. port forward, nginx proxy, etc.)", 
+							"type": "string",
+							"default": "",
+							"pattern": "^.*$"
+						},
+						"bindPort": {
+							"$id": "server/http/bindPort", 
+							"title": "Local bind port", 
+							"type": "integer",
+							"default": 0
+						},
+						"accessPort": {
+							"$id": "server/http/accessPort", 
+							"title": "Remote port number, set this when you deploy grasscutter remotely or with any kind of forwarding(e.g. port forward, nginx proxy, etc.)", 
+							"type": "integer",
+							"default": 0
+						},
+						"encryption": {
+							"$id": "server/http/encryption", 
+							"title": "Encryption settings", 
+							"type": "object",
+							"properties": {
+								"useEncryption": {
+									"$id": "server/http/encryption/useEncryption", 
+									"title": "Use TLS for encrypt the connections", 
+									"type": "boolean",
+									"default": true
+								},
+								"useInRouting": {
+									"$id": "server/http/encryption/useInRouting", 
+									"title": "Use in routing", 
+									"type": "boolean",
+									"default": true
+								},
+								"keystore": {
+									"$id": "server/http/encryption/keystore", 
+									"title": "Keystore file path", 
+									"type": "string",
+									"default": "",
+									"pattern": "^.*$"
+								},
+								"keystorePassword": {
+									"$id": "server/http/encryption/keystorePassword", 
+									"title": "Password for keystore file", 
+									"type": "string",
+									"default": "",
+									"pattern": "^.*$"
+								}
+							}
+						}
+,
+						"policies": {
+							"$id": "server/http/policies", 
+							"title": "Security policies for dispatch server", 
+							"type": "object",
+							"properties": {
+								"cors": {
+									"$id": "server/http/policies/cors", 
+									"title": "CORS policy", 
+									"type": "object",
+									"properties": {
+										"enabled": {
+											"$id": "server/http/policies/cors/enabled", 
+											"title": "ALLOW CORS requests or NOT", 
+											"type": "boolean",
+											"default": true
+										},
+										"allowedOrigins": {
+											"$id": "server/http/policies/cors/allowedOrigins", 
+											"title": "Allowed origins", 
+											"type": "array",
+											"default": []
+										}
+									}
+								}
+
+							}
+						}
+,
+						"files": {
+							"$id": "server/http/files", 
+							"title": "Default files for the http server", 
+							"type": "object",
+							"properties": {
+								"indexFile": {
+									"$id": "server/http/files/indexFile", 
+									"title": "Index page for the server", 
+									"type": "string",
+									"default": "",
+									"pattern": "^.*$"
+								},
+								"errorFile": {
+									"$id": "server/http/files/errorFile", 
+									"title": "Error page for the server", 
+									"type": "string",
+									"default": "",
+									"pattern": "^.*$"
+								}
+							}
+						}
+
+					}
+				}
+,
+				"game": {
+					"$id": "server/game", 
+					"title": "Game server configuration", 
+					"type": "object",
+					"properties": {
+						"bindAddress": {
+							"$id": "server/game/bindAddress", 
+							"title": "Local bind address", 
+							"type": "string",
+							"default": "",
+							"pattern": "^.*$"
+						},
+						"accessAddress": {
+							"$id": "server/game/accessAddress", 
+							"title": "Remote access address", 
+							"type": "string",
+							"default": "",
+							"pattern": "^.*$"
+						},
+						"bindPort": {
+							"$id": "server/game/bindPort", 
+							"title": "Local bind port", 
+							"type": "integer",
+							"default": 0
+						},
+						"accessPort": {
+							"$id": "server/game/accessPort", 
+							"title": "Remote access port", 
+							"type": "integer",
+							"default": 0
+						},
+						"gameOptions": {
+							"$id": "server/game/gameOptions", 
+							"title": "Game options", 
+							"type": "object",
+							"properties": {
+								"inventoryLimits": {
+									"$id": "server/game/gameOptions/inventoryLimits", 
+									"title": "Inventory limits", 
+									"type": "object",
+									"properties": {
+										"weapons": {
+											"$id": "server/game/gameOptions/inventoryLimits/weapons", 
+											"title": "Weapons max count", 
+											"type": "integer",
+											"default": 0
+										},
+										"relics": {
+											"$id": "server/game/gameOptions/inventoryLimits/relics", 
+											"title": "Relics max count", 
+											"type": "integer",
+											"default": 0
+										},
+										"materials": {
+											"$id": "server/game/gameOptions/inventoryLimits/materials", 
+											"title": "Materials max count", 
+											"type": "integer",
+											"default": 0
+										},
+										"furniture": {
+											"$id": "server/game/gameOptions/inventoryLimits/furniture", 
+											"title": "Furniture max count", 
+											"type": "integer",
+											"default": 0
+										},
+										"all": {
+											"$id": "server/game/gameOptions/inventoryLimits/all", 
+											"title": "Max count for all items", 
+											"type": "integer",
+											"default": 0
+										}
+									}
+								}
+,
+								"avatarLimits": {
+									"$id": "server/game/gameOptions/avatarLimits", 
+									"title": "Avatar Limits", 
+									"type": "object",
+									"properties": {
+										"singlePlayerTeam": {
+											"$id": "server/game/gameOptions/avatarLimits/singlePlayerTeam", 
+											"title": "Team limits when playing in single mode", 
+											"type": "integer",
+											"default": 0
+										},
+										"multiplayerTeam": {
+											"$id": "server/game/gameOptions/avatarLimits/multiplayerTeam", 
+											"title": "Team limits when playing in coop mode", 
+											"type": "integer",
+											"default": 0
+										}
+									}
+								}
+,
+								"worldEntityLimit": {
+									"$id": "server/game/gameOptions/worldEntityLimit", 
+									"title": "World entity limit", 
+									"type": "integer",
+									"default": 0
+								},
+								"watchGachaConfig": {
+									"$id": "server/game/gameOptions/watchGachaConfig", 
+									"title": "Monitor gacha config changes. (This may cause crash, equivilent with restart grasscutter after change gacha configs.)", 
+									"type": "boolean",
+									"default": true
+								},
+								"enableShopItems": {
+									"$id": "server/game/gameOptions/enableShopItems", 
+									"title": "Enable game shops", 
+									"type": "boolean",
+									"default": true
+								},
+								"staminaUsage": {
+									"$id": "server/game/gameOptions/staminaUsage", 
+									"title": "Enable stamina manager, will have infinate stamina when disabled. You may also disable stamina for certain player via command", 
+									"type": "boolean",
+									"default": true
+								},
+								"rates": {
+									"$id": "server/game/gameOptions/rates", 
+									"title": "Rates", 
+									"type": "object",
+									"properties": {
+										"adventureExp": {
+											"$id": "server/game/gameOptions/rates/adventureExp", 
+											"title": "Adventure exp", 
+											"type": "integer",
+											"default": 0
+										},
+										"mora": {
+											"$id": "server/game/gameOptions/rates/mora", 
+											"title": "Mora", 
+											"type": "integer",
+											"default": 0
+										},
+										"leyLines": {
+											"$id": "server/game/gameOptions/rates/leyLines", 
+											"title": "Leylines", 
+											"type": "integer",
+											"default": 0
+										}
+									}
+								}
+
+							}
+						}
+,
+						"joinOptions": {
+							"$id": "server/game/joinOptions", 
+							"title": "Configurations for general message", 
+							"type": "object",
+							"properties": {
+								"welcomeEmotes": {
+									"$id": "server/game/joinOptions/welcomeEmotes", 
+									"title": "Welcome emotes sent to player, random one will be selected each time", 
+									"type": "array",
+									"default": []
+								},
+								"welcomeMessage": {
+									"$id": "server/game/joinOptions/welcomeMessage", 
+									"title": "Welco memessage sent to player", 
+									"type": "string",
+									"default": "",
+									"pattern": "^.*$"
+								},
+								"welcomeMail": {
+									"$id": "server/game/joinOptions/welcomeMail", 
+									"title": "Welcome mail sent to player", 
+									"type": "object",
+									"properties": {
+										"title": {
+											"$id": "server/game/joinOptions/welcomeMail/title", 
+											"title": "Mail title", 
+											"type": "string",
+											"default": "",
+											"pattern": "^.*$"
+										},
+										"content": {
+											"$id": "server/game/joinOptions/welcomeMail/content", 
+											"title": "Mail content", 
+											"type": "string"
+										},
+										"sender": {
+											"$id": "server/game/joinOptions/welcomeMail/sender", 
+											"title": "Mail sender display name", 
+											"type": "string",
+											"default": "",
+											"pattern": "^.*$"
+										},
+										"items": {
+											"$id": "server/game/joinOptions/welcomeMail/items", 
+											"title": "Mail attachments", 
+											"type": "array",
+											"default": []
+										}
+									}
+								}
+
+							}
+						}
+,
+						"serverAccount": {
+							"$id": "server/game/serverAccount", 
+							"title": "Virtual player `server` configuration", 
+							"type": "object",
+							"properties": {
+								"avatarId": {
+									"$id": "server/game/serverAccount/avatarId", 
+									"title": "Avatar id number", 
+									"type": "integer",
+									"default": 0
+								},
+								"nameCardId": {
+									"$id": "server/game/serverAccount/nameCardId", 
+									"title": "Namecard style id number", 
+									"type": "integer",
+									"default": 0
+								},
+								"adventureRank": {
+									"$id": "server/game/serverAccount/adventureRank", 
+									"title": "Adventure rank", 
+									"type": "integer",
+									"default": 0
+								},
+								"worldLevel": {
+									"$id": "server/game/serverAccount/worldLevel", 
+									"title": "World level", 
+									"type": "integer",
+									"default": 0
+								},
+								"nickName": {
+									"$id": "server/game/serverAccount/nickName", 
+									"title": "Nick name", 
+									"type": "string",
+									"default": "",
+									"pattern": "^.*$"
+								},
+								"signature": {
+									"$id": "server/game/serverAccount/signature", 
+									"title": "Signature", 
+									"type": "string",
+									"default": "",
+									"pattern": "^.*$"
+								}
+							}
+						}
+
+					}
+				}
+,
+				"dispatch": {
+					"$id": "server/dispatch", 
+					"title": "Dispatch server", 
+					"type": "object",
+					"properties": {
+						"regions": {
+							"$id": "server/dispatch/regions", 
+							"title": "Regions", 
+							"type": "array",
+							"default": []
+						},
+						"defaultName": {
+							"$id": "server/dispatch/defaultName", 
+							"title": "Defaultname", 
+							"type": "string",
+							"default": "",
+							"pattern": "^.*$"
+						}
+					}
+				}
+
+			}
+		}
+,
+		"version": {
+			"$id": "version", 
+			"title": "(DO NOT CHANGE)Version for this config file", 
+			"type": "integer",
+			"default": 0
+		}
+	}
+}
