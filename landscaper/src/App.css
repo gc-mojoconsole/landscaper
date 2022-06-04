@@ -12,7 +12,7 @@
   user-select: none;
 }
 
-input{
+input, textarea{
   -webkit-user-select: text;
   -khtml-user-select: text;
   -moz-user-select: -moz-text;
@@ -68,4 +68,16 @@ html {
 }
 .tree-node-for-span > span[title] {
   width: 100%;
+}
+
+.icon-patch {
+  color:  #ffffffa5
+}
+
+.ant-menu-item-active .icon-patch {
+  color:  #ffffff
+}
+
+.ant-layout-sider-collapsed .ant-scroll-number.ant-badge-dot{
+  transform: translate(5px, 8px);
 }
