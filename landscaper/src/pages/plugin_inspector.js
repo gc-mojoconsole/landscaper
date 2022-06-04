@@ -3,14 +3,10 @@ import {Descriptions, Collapse, Typography, Button} from 'antd';
 import {withTranslation} from 'react-i18next';
 import ConfigEditor from '../components/config_editor';
 import ReactMarkdown from 'react-markdown'
+import Link from '../components/link';
 
 const { Panel } = Collapse;
 const { Text } = Typography;
-
-const link = ({href, children}) => {
-    // eslint-disable-next-line
-    return <a onClick={()=>window.Neutralino.os.open(href)}>{children}</a>
-}
 
 const textCode = ({children}) => {
     return <Text code>{children}</Text>
@@ -82,10 +78,9 @@ class PluginInsepctorPage extends React.Component {
     }
 
     componentDidUpdate() {
-        const {pi} = this.props;
-        if(pi.getID() !== this.state.pi.getID()){
-            this.refreshConfig(pi);
-        }
+        // if(pi.getID() !== this.state.pi.getID()){
+        //     this.refreshConfig(pi);
+        // }
     }
 
     doEnable = async ()=>{
@@ -102,7 +97,6 @@ class PluginInsepctorPage extends React.Component {
 
     render (){
         const {t, pi} = this.props;
-        const Link = link;
         return (
             <div>
                 <Descriptions title={pi.getName()} bordered column={2}>
@@ -140,7 +134,7 @@ class PluginInsepctorPage extends React.Component {
                             iconSize={12}
                             refp={child => this.editor=child} 
                             config={pi.configContent} 
-                            uuid={pi.getID()} 
+                            uuid={pi.toString()} 
                             onSave={pi.saveConfig.bind(pi)} 
                             schema={pi.getSchema()}
                             /> 
@@ -148,9 +142,9 @@ class PluginInsepctorPage extends React.Component {
                         null
                     }
 
-                    {pi.getRemoteVersion()? 
+                    {pi.getRemoteVersion() !== 'N/A' ? 
                         <Panel header={t("Remote Latest Release Note") + " - " + pi.getRemoteVersion()} key="release-note">
-                        <ReactMarkdown components={{a: link, code: textCode}}>{pi.github_releases.body}</ReactMarkdown>
+                        {pi.github_releases? <ReactMarkdown components={{a: Link, code: textCode}}>{pi.github_releases.body}</ReactMarkdown>: null}
                         </Panel>
                     : null}
                 </Collapse>

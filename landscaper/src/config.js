@@ -1,5 +1,8 @@
 module.exports = {
-    UPSTREAM_URL: 'https://www.example.com/',
+    // UPSTREAM_URL: 'https://www.lyric.today/landscaper/',
+    UPSTREAM_URL: 'https://github.lyric.today/landscaper/',
     PLUGINS_DEPOT: 'plugins/',
-    GITHUB_API: 'https://dry-darkness-1564.mo-jo.workers.dev/'
+    GITHUB_API: 'https://github.lyric.today',
+    // ARTIFACT_CDN: 'https://github-raw.lyric.today
+    // GITHUB_API: 'https://api.github.com'
 }

@@ -1,19 +1,11 @@
-import * as zip from '@zip.js/zip.js';
+// import * as zip from '@zip.js/zip.js';
 import {Modal, Button} from 'antd';
-import {UPSTREAM_URL, PLUGINS_DEPOT, GITHUB_API} from '../config';
+import {UPSTREAM_URL, PLUGINS_DEPOT, GITHUB_API, ARTIFACT_CDN} from '../config';
 import i18n from "i18next";
 import {QuestionCircleOutlined} from '@ant-design/icons';
 
 const {confirm, info} = Modal;
-const neu = window.Neutralino;
-const fs = neu.filesystem;
 const FETCH_URL = UPSTREAM_URL + PLUGINS_DEPOT;
-function uuidv4() {
-    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-    // eslint-disable-next-line
-      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    );
-  }
 const delay = async (ms = 1000) => new Promise(resolve => setTimeout(resolve, ms))
 
 async function selectRelease(releases) {
@@ -23,7 +15,7 @@ async function selectRelease(releases) {
       title: i18n.t('The following files available on github, which one would you like?'),
       icon: <QuestionCircleOutlined />,
       content: <div style={{ display: 'flex', flexDirection: 'column', gap: "10px 10px"}}> 
-                {releases.map((e, idx)=> <Button onClick={()=>selected=idx}>{e.name}</Button>)}
+                {releases.map((e, idx)=> <Button key={e.name} onClick={()=>selected=idx}>{e.name}</Button>)}
             </div>,
       okButtonProps: {style: {display:'none'}},
       closable: true,
@@ -44,34 +36,29 @@ export default class PluginInsepctor{
         authors: ["loading"],
     };
     configContent = null;
-    uuid = "";
     configFilename = 'mojoconfig.json';
     metaData = null;
     jarPath = "loading"
     onrefresh = ()=>{};
     github_releases = null;
+    backend = null;
+    parent = null;
 
     async parseJar(path){
-        let data = await fs.readBinaryFile(path);
-        data = new Uint8Array(data);
-        let zip_entries = await new zip.ZipReader(new zip.Uint8ArrayReader(data), {useWebWorkers: true}).getEntries();
-        for(let i = 0; i < zip_entries.length; i++){
-            let entry = zip_entries[i];
-            if (entry.filename === "plugin.json"){
-                let config = await entry.getData(new zip.TextWriter());
-                this.config = JSON.parse(config);
-                this.fetch_upstream();
-                break;
-            }
-        }
+        let ret = await this.backend.extractFile(path, 'plugin.json');
+        if (ret.length === 0) throw new Error(`${path} is not a valid plugin.`)
+        const {data} = ret[0];
+        this.config = JSON.parse(new TextDecoder().decode(data));
+        this.fetch_upstream();
     }
-    constructor(path, onrefresh, enabled = true) {
+    constructor(parent, path, backend, onrefresh, enabled = true) {
+        this.backend = backend;
+        this.parent = parent;
         if (path){
             this.jarPath = path;
             this.parseJar(path);
             this.folderPath = path.replace(/[^/]+$/,"");
         }
-        this.uuid = uuidv4();
         if (onrefresh) this.onrefresh = onrefresh;
         this.enabled = enabled;
     }
@@ -82,7 +69,6 @@ export default class PluginInsepctor{
             let response = await fetch(FETCH_URL + this.config.name + '.json');
             let metaData = await response.json();
             this.metaData = metaData;
-            console.log(metaData);
 
             // fetch release from github
             if (metaData.releases){
@@ -96,7 +82,6 @@ export default class PluginInsepctor{
         this.onrefresh();
     }
     
-    getID() {return this.uuid;}
 
     getName() { return this.config.name;}
     
@@ -130,14 +115,14 @@ export default class PluginInsepctor{
         if (!this.isConfigable()){
             return;
         }
-        this.configContent = JSON.parse(await fs.readFile(this.folderPath + this.configFilename));
+        this.configContent = JSON.parse(await this.backend.readFile(this.folderPath + this.configFilename));
         return this.configContent;
     }
 
     async saveConfig(config) {
         if (!this.isConfigable()) return;
         this.configContent = config;
-        await fs.writeFile(this.folderPath + this.configFilename, JSON.stringify(config))
+        await this.backend.writeFile(this.folderPath + this.configFilename, JSON.stringify(config))
     }
     
     getGithub(){
@@ -159,6 +144,7 @@ export default class PluginInsepctor{
     }
 
     async fetchUpdate(){
+        if (!this.backend) this.backend = window.landscaper.backend;
         if (this.hasUpdate()){
             let index = await selectRelease(this.github_releases.assets);
             if (index === -1) return -1;
@@ -167,39 +153,29 @@ export default class PluginInsepctor{
                 okButtonProps: {style: {display: 'none'}},
                 closable: false
             });
-            let tmpfilename = `./tmp-${uuidv4()}`;
+            let url = this.github_releases.assets[index].browser_download_url;
+            let tmpfilename = '';
             try{
-                // let res = await fetch(this.github_releases.assets[index].browser_download_url, {redirect: "follow", mode:'no-cors'});
-                // let data = new Uint8Array(await (await res.blob()).arrayBuffer());
-                let command = `curl -L "${this.github_releases.assets[index].browser_download_url}" -o ${tmpfilename}`;
-                // console.log(command);
-                let data = await neu.os.execCommand(command, {background: false, stdIn:""})
-                // eslint-disable-next-line
-                if (data.exitCode !== 0) throw data;
+                tmpfilename = await this.backend.downloadFile(url);
                 if (this.github_releases.assets[index].name.endsWith('.jar')){
-                    neu.filesystem.removeFile(this.jarPath).catch();
-                    await neu.filesystem.moveFile(tmpfilename, this.jarPath);
+                // if we downloaded a jar file from github
+                await this.backend.removeFile(this.jarPath);
+                    await this.backend.moveFile(tmpfilename, this.jarPath);
                 } else if (this.github_releases.assets[index].name.endsWith('.zip')){
-                    let data = await neu.filesystem.readBinaryFile(tmpfilename);
-                    data = new Uint8Array(data);
-                    let zip_entries = await new zip.ZipReader(new zip.Uint8ArrayReader(data), {useWebWorkers: true}).getEntries();
-                    for(let i = 0; i < zip_entries.length; i++){
-                        let entry = zip_entries[i];
-                        if (entry.directory){
-                            await neu.filesystem.createDirectory(entry.filename).catch();
-                        } else {
-                            let file = await entry.getData(new zip.Uint8ArrayWriter());
-                            if (entry.filename.endsWith(".jar")){
-                                neu.filesystem.writeBinaryFile(this.jarPath, file);
-                            } else {
-                                neu.filesystem.writeBinaryFile(this.folderPath + `/${entry.filename}`, file);
-                            }
+                // if we downloaded a zip file from github
+                    const files = await this.backend.extractFile(tmpfilename, /.*/, this.folderPath);
+
+                    files.forEach(({filename}) => {
+                        if (filename.endsWith('.jar') && filename !== this.jarPath) {
+                            this.backend.removeFile(this.jarPath).then(() => {
+                                this.backend.moveFile(filename, this.jarPath);
+                            });
                         }
-                    }
-                    neu.filesystem.removeFile(tmpfilename);
+                    })
                 }
-                // console.log(data);
-                // await fs.writeBinaryFile(this.config.path, data);
+                
+                this.backend.removeFile(tmpfilename);
+
                 await this.parseJar(this.jarPath);
                 modal.destroy();
                 let acknowledged = false;
@@ -218,7 +194,7 @@ export default class PluginInsepctor{
             } catch(e){
                 console.log(e);
                 modal.destroy();
-                neu.filesystem.removeFile(tmpfilename).catch();
+                this.backend.removeFile(tmpfilename);
                 modal = info({
                     title: i18n.t('Failed') + e
                 });
@@ -230,7 +206,7 @@ export default class PluginInsepctor{
     
     async doDisable(){
         if (!this.enabled) return;
-        await fs.moveFile(this.jarPath, this.jarPath + '.landscaper')
+        await this.backend.moveFile(this.jarPath, this.jarPath + '.landscaper')
         this.jarPath += '.landscaper';
         this.enabled = false;
         this.onrefresh();
@@ -239,7 +215,7 @@ export default class PluginInsepctor{
     async doEnable(){
         if (this.enabled) return;
         let newJarPath = this.jarPath.replace('.landscaper','');
-        await fs.moveFile(this.jarPath, newJarPath)
+        await this.backend.moveFile(this.jarPath, newJarPath)
         this.jarPath = newJarPath;
         this.enabled = true;
         this.onrefresh();

@@ -29,6 +29,8 @@ class ModalWindow extends React.Component {
       try{
         if (await this.checkFile(path[0])){
           await neu.storage.setData("grasscutter_path", path[0]);
+          window.landscaper.path = path[0];
+          window.landscaper.initilize();
           this.setState({gc_path: path[0]});
         }
       } catch (e) {
@@ -88,6 +90,11 @@ class ModalWindow extends React.Component {
               <Input size="large" placeholder={t("Path to grasscutter jar file")} prefix={<FileZipOutlined />} value={gc_path?gc_path: null} />
               <Button type="primary" shape="circle" style={{marginLeft: '10px'}} onClick={this.onNavigate.bind(this)} icon={<FileSearchOutlined />} />
             </div>
+            <Button style={{
+              marginTop: '20px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+            }} disabled={gc_path === ''} onClick={this.onclose.bind(this)} type="primary" shape="round">{t("Confirm")}</Button>
           </Modal>
 
         </div>)

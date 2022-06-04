@@ -1,6 +1,7 @@
 import React from 'react';
 import {Card, List, Select, Row, Button} from 'antd';
 import { withTranslation } from 'react-i18next';
+import PACKAGE from '../../package.json';
 
 const {Option} = Select;
 const neu = window.Neutralino;
@@ -30,7 +31,8 @@ class Settings extends React.Component {
         window.location.reload();
     }
     render() {
-        const {t, path} = this.props;
+        const {t} = this.props;
+        const path = this.props.manager.path;
         const settings = [
             <Row style={styles.row}><div>{t('Language')}</div>
                 <Select value={this.state.language} style={{width: '200px'}} onChange={this.changeLanguage.bind(this)}>
@@ -43,6 +45,10 @@ class Settings extends React.Component {
                         {t('Current')}:  {path}
                     </div></div>
                 <Button danger onClick={this.resetPath}>{t('Select')}</Button>
+            </Row>,
+            <Row style={styles.row}>
+                <div>{t('Version')}</div>
+                <div>{PACKAGE.version}</div>
             </Row>
         ];
         let index = 0;

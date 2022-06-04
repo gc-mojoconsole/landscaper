@@ -8,6 +8,9 @@ import { initReactI18next } from "react-i18next";
 
 import i18n_res from "./data/i18n/i18n";
 
+import LandscaperCore from './core/core';
+import NeutralinoBackend from './core/backend/neutralino';
+
 // if (!window.NL_PORT){
 //   let auth_info = require("./auth_info.json");
 //   window.NL_PORT = auth_info.port;
@@ -34,4 +37,9 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
-window.Neutralino.init(); // Add this function call
+try{
+  window.Neutralino.init(); // Add this function call
+} catch(e){
+  console.log(e);
+}
+window.landscaper = new LandscaperCore(new NeutralinoBackend(window.Neutralino));

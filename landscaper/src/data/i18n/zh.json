@@ -64,6 +64,24 @@
       "The following jar file available on github, which one would you like?": "Github上有以下jar文件，请问您想下载哪一个？",
       "Enable": "启用",
       "Disable": "禁用",
-      "Root": "根节点"
+      "Root": "根节点",
+      "Edit": "编辑",
+      "Edit Config": "编辑配置",
+      "Change Version": "切换版本",
+      "On latest remote branch": "已更新到最新",
+      "Off latest remote branch": "有新的更新",
+      "Remote Branch": "同步分支",
+      "Auth": "认证",
+      "No uninstalled plugins": "暂无未安装的插件",
+      "Select Target": "选择目标版本",
+      "Select artifacts to be downloaded.": "选择要下载的构建",
+      "Working": "进行中",
+      "Working on it": "正在作业",
+      "Finish": "完成",
+      "Done": "完成",
+      "Event": "事件",
+      "Branch": "分支",
+      "Commit": "提交",
+      "": ""
     }
 }

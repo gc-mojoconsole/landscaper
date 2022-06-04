@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Badge } from 'antd';
 import {
   GithubOutlined,
   AppstoreAddOutlined,
@@ -19,7 +19,7 @@ function getItem(label, key, icon, children) {
   };
 }
 
-
+const THEME='dark';
 
 class LandscaperLayout extends React.Component {
   state = {
@@ -32,10 +32,12 @@ class LandscaperLayout extends React.Component {
   };
 
   render() {
-    const {t, onSelect} = this.props;
+    const {t, onSelect, manager} = this.props;
     const items = [
       getItem(t('Grasscutter'), 'info', <InfoCircleOutlined />),
-      getItem(t('Installed Plugins'), 'plugin', <AppstoreAddOutlined />),
+      manager? getItem(t('Installed Plugins'), 'plugin', manager.installed.some((pi)=> pi.hasUpdate())?
+         <Badge dot ><AppstoreAddOutlined className='icon-patch'/></Badge>:
+         <AppstoreAddOutlined />) : getItem(t('Installed Plugins'), 'plugin', <AppstoreAddOutlined />),
       getItem(t('Plugin Market'), 'market', <GithubOutlined />),
       getItem(t('Settings'), 'setting', <SettingOutlined />),
     ];
@@ -47,9 +49,9 @@ class LandscaperLayout extends React.Component {
           minHeight: '100vh',
         }}
       >
-        <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
+        <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse} theme={THEME}>
           <div className="logo" />
-          <Menu theme="dark" defaultSelectedKeys={['info']} mode="inline" items={items} onSelect={onSelect} />
+          <Menu theme={THEME} defaultSelectedKeys={['info']} mode="inline" items={items} onSelect={onSelect} />
         </Sider>
         <div style={{overflowX: "hidden", overflowY: "overlay", width: "100%", padding:"20px", maxHeight: "100vh"}}>{content? content: "Loading"}</div>
       </Layout>

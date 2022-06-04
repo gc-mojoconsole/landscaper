@@ -1,15 +1,21 @@
 import React from 'react';
-import {Card, Tag, Avatar, Tooltip} from 'antd';
+import {Card, Tag, Avatar, Tooltip, Empty, Modal, Typography, Collapse} from 'antd';
 import { withTranslation } from 'react-i18next';
 
 import {GithubOutlined, DownloadOutlined, EllipsisOutlined} from '@ant-design/icons';
 
-import marketData from '../market.json';
-import PluginInsepctor from '../core/plugin_inspector';
-import { GITHUB_API } from '../config';
+import PluginInsepctor from '../core/plugin_manager';
+import { GITHUB_API, UPSTREAM_URL } from '../config';
+import ReactMarkdown from 'react-markdown';
+import Link from '../components/link';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 const { Meta } = Card;
 const neu = window.Neutralino;
+const {Text} = Typography;
+const textCode = ({children}) => <Text code>{children}</Text>;
+const { Panel } = Collapse;
 
 var stringToColour = function(str) {
     var hash = 0;
@@ -29,17 +35,20 @@ class MarketPage extends React.Component {
         marketData: [],
         uninstalled: [],
         installed: [],
-        column: 1
+        column: 1,
+        toggle_more: false,
+        more: {},
     }
     divRef = null
 
-    fetchData() {
-        this.setState({marketData: marketData});
+    async fetchData() {
+        let marketData = await (await fetch(`${UPSTREAM_URL}/market.json`)).json();
+        this.setState({marketData});
         
         const {manager} = this.props;
         let installed = [];
         let uninstalled = [];
-        marketData.forEach((plugin) => {
+        marketData.forEach(async (plugin) => {
             let installed_flag = false;
             manager.installed.forEach((p)=>{
                 if (p.getName() === plugin.name) installed_flag = true;
@@ -50,9 +59,9 @@ class MarketPage extends React.Component {
                 let pi = new PluginInsepctor();
                 let folderPath = "";
                 try{
-                    folderPath = manager.path + manager.config.folderStructure.plugins;
+                    folderPath = await manager.getFolder() + manager.config.folderStructure.plugins;
                 } catch(e){
-                    folderPath = manager.path + './plugins/';
+                    folderPath = await manager.getFolder() + './plugins/';
                 }
                 pi.jarPath = folderPath + `/${plugin.name}.jar`;
                 pi.config.name = plugin.name;
@@ -82,10 +91,32 @@ class MarketPage extends React.Component {
         this.setState({ column: Math.floor(this.ref.clientWidth / 330) });
     }
 
+    showMore = async (plugin) => {
+        const {pi} = plugin
+        let more = {
+            title: pi.config.name,
+            version: '',
+            time: '',
+            release: '',
+            readme: ''
+        };
+        this.setState({more, toggle_more: true});
+        let releases = await (await fetch(`${GITHUB_API}/repos/${plugin.github}/${plugin.releases}`)).json();
+        more.release = releases.body.replaceAll(/#([0-9]+)/g, `[#$1](https://github.com/${plugin.github}/issues/$1)`);
+        more.version = releases.tag_name;
+        more.time = new Date(releases.created_at).toLocaleString();
+        this.setState({more});
+        let res = await (await fetch(`${GITHUB_API}/repos/${plugin.github}`)).json();
+        let readme = await (await fetch(`https://raw.githubusercontent.com/${plugin.github}/${res.default_branch}/README.md`)).text();
+        more.readme = readme;
+        this.setState({more});
+    }
+
     render() {
         const {t, manager} = this.props;
-        const {uninstalled, column} = this.state;
+        const {uninstalled, column, toggle_more, more} = this.state;
         return (<div ref={(e)=> this.ref = e}>
+            {uninstalled.length === 0? <Empty description={t("No uninstalled plugins")} />:null}
             <div style={{columnCount: column, margin: "auto", width: column * 330}} >
                 {uninstalled.map((plugin, index) =>{
                     return(
@@ -117,7 +148,7 @@ class MarketPage extends React.Component {
                                         this.setState({uninstalled: this.state.uninstalled});
                                     }} />
                                 </Tooltip>,
-                                <Tooltip title={t("More")} key="more"><EllipsisOutlined /></Tooltip>
+                                <Tooltip title={t("More")} key="more"><EllipsisOutlined onClick={()=> this.showMore(plugin)} /></Tooltip>
                             ]}
 
                         >
@@ -128,6 +159,23 @@ class MarketPage extends React.Component {
                         </Card>
                     </div>)}
                 )}
+                <Modal visible={toggle_more} cancelButtonProps={{style: {display: "none"}}} onOk={()=>this.setState({toggle_more: false})} onCancel={()=>this.setState({toggle_more: false})} maskClosable title={more.title}>
+                    <Collapse ghost defaultActiveKey={['rl']}>
+                        <Panel header={`${t("Latest Release Version")} : ${more.version}`} >
+                            {t("Release Time")} : {more.time}
+                        </Panel>
+                        <Panel header={t("Release Log")} key='rl'>
+                            {more.release? 
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{a: Link, code: textCode}}>{more.release}</ReactMarkdown>
+                            :<Empty/>}
+                        </Panel>
+                        <Panel header={t("Readme")} key='rm'>
+                            {more.readme? 
+                                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{a: Link, code: textCode}}>{more.readme}</ReactMarkdown>
+                                : <Empty/>}
+                        </Panel>
+                    </Collapse>
+                </Modal>
             </div>
             {/* installed:
             <div style={{display: 'flex', flexDirection: 'row', gap:"20px 20px", flexWrap: 'wrap'}}>
