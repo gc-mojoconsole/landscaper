@@ -30,12 +30,22 @@ class LandscaperLayout extends React.Component {
       collapsed,
     });
   };
+  updateHandler = null;
+
+  componentDidMount() {
+    this.updateHandler = () => this.setState({});
+    window.landscaper.mountWatcher(this.updateHandler);
+  }
+
+  componentWillUnmount() {
+    window.landscaper.unmountWatcher(this.updateHandler);
+  }
 
   render() {
     const {t, onSelect, manager} = this.props;
     const items = [
       getItem(t('Grasscutter'), 'info', <InfoCircleOutlined />),
-      manager? getItem(t('Installed Plugins'), 'plugin', manager.installed.some((pi)=> pi.hasUpdate())?
+      manager? getItem(t('Installed Plugins'), 'plugin', manager.installed.some((pi)=> pi.enabled && pi.hasUpdate())?
          <Badge dot ><AppstoreAddOutlined className='icon-patch'/></Badge>:
          <AppstoreAddOutlined />) : getItem(t('Installed Plugins'), 'plugin', <AppstoreAddOutlined />),
       getItem(t('Plugin Market'), 'market', <GithubOutlined />),

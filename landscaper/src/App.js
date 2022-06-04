@@ -41,7 +41,7 @@ class App extends React.Component {
       this.handleUpdate();
       this.updateHandler = this.handleUpdate.bind(this);
       window.landscaper.mountWatcher(this.updateHandler);
-      window.Neutralino.storage.getData('setting-language').then((lang)=>{
+      window.landscaper.backend.getData('setting-language').then((lang)=>{
         this.props.i18n.changeLanguage(lang);
       }).catch((err)=>{
         console.log(err);

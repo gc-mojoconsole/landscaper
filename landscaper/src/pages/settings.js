@@ -4,7 +4,6 @@ import { withTranslation } from 'react-i18next';
 import PACKAGE from '../../package.json';
 
 const {Option} = Select;
-const neu = window.Neutralino;
 const styles = {
     row: {width: '100%', justifyContent: 'space-between'},
     adjacent: {color: 'darkgray', fontSize: '12px'}
@@ -13,21 +12,26 @@ class Settings extends React.Component {
     state = {
         language: 'en'
     }
+    manager = null
+    constructor(props) {
+        super(props);
+        this.manager = window.landscaper;
+    }
     componentDidMount() {
-        neu.storage.getData('setting-language').then((data) => {
+        this.manager.backend.getData('setting-language').then((data) => {
             this.setState({language: data});
         }).catch((error) => {
             console.log(error);
-            neu.storage.setData('setting-language','en');
+            this.manager.backend.setData('setting-language','en');
         })
     }
     changeLanguage(value) {
-        neu.storage.setData('setting-language',value);
+        this.manager.backend.setData('setting-language',value);
         this.props.i18n.changeLanguage(value);
         this.setState({language: value});
     }
     resetPath() {
-        neu.storage.setData('grasscutter_path', null);
+        this.manager.backend.setData('grasscutter_path', null);
         window.location.reload();
     }
     render() {
@@ -44,7 +48,7 @@ class Settings extends React.Component {
                     <div style={styles.adjacent}>
                         {t('Current')}:  {path}
                     </div></div>
-                <Button danger onClick={this.resetPath}>{t('Select')}</Button>
+                <Button danger onClick={this.resetPath.bind(this)}>{t('Select')}</Button>
             </Row>,
             <Row style={styles.row}>
                 <div>{t('Version')}</div>

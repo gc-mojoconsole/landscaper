@@ -1,9 +1,9 @@
 import React from 'react';
 import {List, Typography, Row, Button} from 'antd';
+import Link from "../components/link";
 
 const {Text} = Typography;
 
-const neu = window.Neutralino;
 
 class GitCommitItem extends React.Component {
     state = {
@@ -52,7 +52,7 @@ class GitCommitItem extends React.Component {
                 <List.Item key={sha}>
                     <Row style={{flexWrap: "nowrap"}}>
                     {/* eslint-disable-next-line */}
-                        <Text code style={{minWidth: "70px"}}><a onClick={()=> neu.os.open(`https://github.com/Grasscutters/Grasscutter/commit/${sha}`)}>{sha.slice(0,6)}</a></Text>
+                        <Text code style={{minWidth: "70px"}}><Link href={`https://github.com/Grasscutters/Grasscutter/commit/`}>{sha.slice(0,6)}</Link></Text>
                         <div>
                             {desc}
                             {toggleVisible? <Button shape="circle" size="small" onClick={this.showDetail.bind(this)}>&middot;&middot;&middot;</Button>: null}

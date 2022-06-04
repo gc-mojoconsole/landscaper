@@ -126,4 +126,12 @@ export default class Neutralino{
     open(url) {
         this.neu.os.open(url);
     }
+
+    async showOpenDialog(title, props){
+        return await this.neu.os.showOpenDialog(title, props);
+    }
+
+    async getStats(path){
+        return await this.neu.filesystem.getStats(path);
+    }
 }

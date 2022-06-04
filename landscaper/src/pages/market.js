@@ -12,7 +12,6 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 
 const { Meta } = Card;
-const neu = window.Neutralino;
 const {Text} = Typography;
 const textCode = ({children}) => <Text code>{children}</Text>;
 const { Panel } = Collapse;
@@ -132,7 +131,7 @@ class MarketPage extends React.Component {
                             boxSizing: "content-box", margin: "10px"}}
                             actions={[
                                 <Tooltip title={t("View on github")} key="info">
-                                    <GithubOutlined onClick={()=>neu.os.open(`https://github.com/${plugin.github}`)}/>
+                                    <Link href={`https://github.com/${plugin.github}`}><GithubOutlined/></Link>
                                 </Tooltip>,
                                 <Tooltip title={t("Install")} key="install">
                                     <DownloadOutlined onClick={async ()=> {

@@ -1,34 +1,53 @@
 import React from 'react';
-import { Modal, Input, Button, notification } from "antd";
+import { Modal, Input, Button, notification, Select } from "antd";
 import { withTranslation } from 'react-i18next';
 import {FileZipOutlined, FileSearchOutlined} from '@ant-design/icons';
 
-const neu = window.Neutralino;
-
+const { Option } = Select;
 class ModalWindow extends React.Component {
     state = {
-      gc_path: null
+      gc_path: null,
+      language: 'en'
+    }
+    manager = null
+
+    constructor(props) {
+      super(props);
+      this.manager = window.landscaper;
     }
 
     componentDidMount() {
-      neu.storage.getData("grasscutter_path").then((data) => {
+      this.manager.backend.getData("grasscutter_path").then((data) => {
         this.setState({gc_path: data});
       }).catch(_ => {
-        neu.storage.setData("grasscutter_path", "").then((_) => {
-          this.setState({gc_path: "111"});
+        this.manager.backend.setData("grasscutter_path", "").then((_) => {
+          this.setState({gc_path: ""});
         });
       });
+
+      this.manager.backend.getData('setting-language').then((data) => {
+        this.setState({language: data});
+      }).catch((error) => {
+          console.log(error);
+          this.manager.backend.setData('setting-language','en');
+      })
+    }
+
+    changeLanguage(value) {
+      this.manager.backend.setData('setting-language',value);
+      this.props.i18n.changeLanguage(value);
+      this.setState({language: value});
     }
 
     async onNavigate(){
       const {t} = this.props;
-      let path = await neu.os.showOpenDialog(t("Select grasscutter installation path"), {filters: [
+      let path = await this.manager.backend.showOpenDialog(t("Select grasscutter installation path"), {filters: [
         {name: 'Grasscutter', extensions: ['jar']}
       ]});
       if (path.length === 0) return;
       try{
         if (await this.checkFile(path[0])){
-          await neu.storage.setData("grasscutter_path", path[0]);
+          await this.manager.backend.setData("grasscutter_path", path[0]);
           window.landscaper.path = path[0];
           window.landscaper.initilize();
           this.setState({gc_path: path[0]});
@@ -47,13 +66,13 @@ class ModalWindow extends React.Component {
       if (!path.endsWith('.jar')) {
         return Promise.reject();
       }
-      let fileStats = await neu.filesystem.getStats(path);
+      let fileStats = await this.manager.backend.getStats(path);
       return Promise.resolve(fileStats.isFile);
     }
 
     async onclose(){
       const {t, close} = this.props;
-      let gc_path = await neu.storage.getData('grasscutter_path');
+      let gc_path = await this.manager.backend.getData('grasscutter_path');
       console.log(gc_path);
       if (await this.checkFile(gc_path)){
         close({select_path_visible: false});
@@ -86,6 +105,13 @@ class ModalWindow extends React.Component {
               okText="Close"
               onOk={this.onclose.bind(this)}
             >
+              <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <div>{t('Language')}</div>
+                <Select value={this.state.language} style={{width: '200px', marginRight: '41px'}} onChange={this.changeLanguage.bind(this)}>
+                    <Option value="en">English</Option>
+                    <Option value="zh">中文</Option>
+                </Select>
+              </div>,
             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
               <Input size="large" placeholder={t("Path to grasscutter jar file")} prefix={<FileZipOutlined />} value={gc_path?gc_path: null} />
               <Button type="primary" shape="circle" style={{marginLeft: '10px'}} onClick={this.onNavigate.bind(this)} icon={<FileSearchOutlined />} />

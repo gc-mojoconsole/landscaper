@@ -33,6 +33,8 @@ export default class Grasscutter extends Watchable{
             this.fetchUpstream();
         } catch(e){
             console.log(e);
+            this.path = null;
+            this.onUpdate();
         }
     }
 
@@ -100,15 +102,20 @@ export default class Grasscutter extends Watchable{
 
     async readVersion(){
         const regex = /VERSION[\s\S]*ConstantValue[^0-9\-.a-zA-Z]*([0-9.\-a-zA-Z]+)[\s\S]*GIT_HASH[^0-9a-f]*([0-9a-f]+)[\s\S]*Code/;
-        let buildconfig = (await this.backend.extractFile(this.path, 'emu/grasscutter/BuildConfig.class'))[0];
-        const {data} = buildconfig;
-        let content = new TextDecoder().decode(data);
-        let ret = content.match(regex);
-        this.version = {
-            tag: ret[1],
-            hash: ret[2]
+        try{
+            let buildconfig = (await this.backend.extractFile(this.path, 'emu/grasscutter/BuildConfig.class'))[0];
+            const {data} = buildconfig;
+            let content = new TextDecoder().decode(data);
+            let ret = content.match(regex);
+            this.version = {
+                tag: ret[1],
+                hash: ret[2]
+            }
+            this.ready = true;
+        } catch (e){
+            this.path = null;
+            await this.backend.setData("grasscutter_path", null);
         }
-        this.ready = true;
         this.onUpdate();
     }
 
