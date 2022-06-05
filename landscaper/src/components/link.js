@@ -1,9 +1,9 @@
 const Link = ({href, children}) => {
-    if (window.Neutralino) {
+    if (window.landscaper) {
         // eslint-disable-next-line
         return <a onClick={
             ()=> {
-                window.Neutralino.os.open(href);
+                window.landscaper.backend.open(href);
             }
         }>
             {children}
