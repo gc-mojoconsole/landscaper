@@ -33,6 +33,7 @@
     "dependencies": {
         "electron-dl": "^3.3.1",
         "electron-store": "^8.0.1",
+        "mongodb": "^4.6.0",
         "open": "^8.4.0",
         "unzipper": "^0.10.11"
     },
