@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 18
       - run: npm install && npm install --prefix ./landscaper/
-      - run: node run dist
+      - run: npm run dist
       - uses: actions/upload-artifact@v2
         with:
           name: dist-merged
