@@ -1,6 +1,6 @@
 // import * as zip from '@zip.js/zip.js';
 import {Modal, Button} from 'antd';
-import {UPSTREAM_URL, PLUGINS_DEPOT, GITHUB_API, ARTIFACT_CDN} from '../config';
+import {UPSTREAM_URL, PLUGINS_DEPOT, GITHUB_API} from '../config';
 import i18n from "i18next";
 import {QuestionCircleOutlined} from '@ant-design/icons';
 
