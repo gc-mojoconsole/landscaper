@@ -23,8 +23,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            ./node_modules
-            ./landscaper/node_modules
+            **/node_modules
           key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
       - run: npm install && npm install --prefix ./landscaper/
       - run: npm run dist-ci
