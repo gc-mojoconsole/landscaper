@@ -11,12 +11,10 @@ export default class ElectronBackend{
     }
 
     async readFile(path){
-        // return await this.neu.filesystem.readFile(path);
         return await this.channel.invoke('read-file', path);
     }
 
     async readBinaryFile(path){
-        // return await this.neu.filesystem.readBinaryFile(path);
         return await this.channel.invoke('read-binary-file', path);
     }
 
@@ -48,55 +46,38 @@ export default class ElectronBackend{
     }
 
     async writeFile(path, data) {
-        // return await this.neu.filesystem.writeFile(path, data);
         return await this.channel.invoke('write-file', path, data);
     }
 
     async getData(key, defaultValue=null) {
-        // let ret = await this.neu.storage.getData(key);
-        // if (ret === null || ret === undefined) {
-        //     return defaultValue;
-        // } else {
-        //     return ret;
-        // }
         return await this.channel.invoke('get-data',key, defaultValue);
     }
 
     async setData(key, value) {
         return await this.channel.invoke('set-data',key, value);
-        // await this.neu.storage.setData(key, value);
     }
 
     async listDir(path) {
-        // return await this.neu.filesystem.readDirectory(path);
         return await this.channel.invoke('list-dir',path);
     }
 
     async removeFile(path) {
-        // try {
-        //     await this.neu.filesystem.removeFile(path);
-        // } catch(e) {
-        //     console.log(e);
-        // }
-        return await this.channel.invoke('remove-file',path);
+        try {
+            return await this.channel.invoke('remove-file',path);
+        } catch(e) {
+            console.log(e);
+        }
     }
 
     async createDirectory(path) {
-        // try{
-        //     return await this.neu.filesystem.createDirectory(path);
-        // } catch(e) {
-        //     console.log(e);
-        // }
         return await this.channel.invoke('create-directory', path);
     }
 
     async moveFile(originalPath, newPath) {
-        // return await this.neu.filesystem.moveFile(originalPath, newPath);
         return await this.channel.invoke('move-file', originalPath, newPath);
     }
 
     open(url) {
-        // this.neu.os.open(url);
         this.channel.invoke('open', url);
     }
 
