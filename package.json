@@ -11,7 +11,8 @@
         "eject": "react-scripts eject",
         "electron": "wait-on tcp:127.0.0.1:3000 && electron .",
         "start": "concurrently -k \"BROWSER=none npm run front\" \"npm:electron\"",
-        "dist": "PUBLIC_URL=\"./\" npm run build --prefix ./landscaper && electron-builder"
+        "dist": "PUBLIC_URL=\"./\" npm run build --prefix ./landscaper && electron-builder",
+        "dist-ci": "npm run build --prefix ./landscaper && electron-builder"
     },
     "repository": "https://github.com/electron/electron-quick-start",
     "keywords": [
