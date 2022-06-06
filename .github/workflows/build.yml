@@ -11,15 +11,20 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-
+    env:
+      PUBLIC_URL: ./
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            landscaper/package-lock.json
       - run: npm install && npm install --prefix ./landscaper/
-      - run: node run dist
+      - run: npm run dist-ci
       - uses: actions/upload-artifact@v2
         with:
           name: dist-merged
