@@ -2,6 +2,8 @@ import React from 'react';
 import {Card, List, Select, Row, Button} from 'antd';
 import { withTranslation } from 'react-i18next';
 import PACKAGE from '../../package.json';
+import Link from '../components/link'
+import {GithubOutlined} from '@ant-design/icons';
 
 const {Option} = Select;
 const styles = {
@@ -53,6 +55,10 @@ class Settings extends React.Component {
             <Row style={styles.row}>
                 <div>{t('Version')}</div>
                 <div>{PACKAGE.version}</div>
+            </Row>,
+            <Row style={styles.row}>
+                <div>View on Github <GithubOutlined /></div>
+                <div><Link href="https://github.com/gc-mojoconsole/landscaper">{t("Open")}</Link></div>
             </Row>
         ];
         let index = 0;
