@@ -57,7 +57,7 @@ export default class PluginInsepctor{
         if (path){
             this.jarPath = path;
             this.parseJar(path);
-            this.folderPath = path.replace(/[^/]+$/,"");
+            this.folderPath = path.match(/(.*)[\/\\]/)[1]||'';
         }
         if (onrefresh) this.onrefresh = onrefresh;
         this.enabled = enabled;

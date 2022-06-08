@@ -56,7 +56,7 @@ export default class Grasscutter extends Watchable{
     async getFolder(){
         let path = await this.getPath();
         if (path){
-            return path.replace(/[^/]+$/,'');
+            return path.match(/(.*)[\/\\]/)[1]||'';
         } else {
             return null;
         }
