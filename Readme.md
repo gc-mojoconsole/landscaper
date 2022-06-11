@@ -8,11 +8,11 @@
 
 * Update check & One-click update
 
-![CleanShot 2022-06-10 at 23.34.10](./.github/images/Readme/CleanShot 2022-06-10 at 23.34.10.gif)
+![CleanShot 2022-06-10 at 23.34.10](https://github.com/gc-mojoconsole/landscaper/blob/electron/.github/images/Readme/CleanShot%202022-06-10%20at%2023.34.10.gif?raw=true)
 
 * Tooltip'd config editor
 
-![CleanShot 2022-06-10 at 23.37.00](.github/images/Readme/CleanShot 2022-06-10 at 23.37.00.gif)
+![CleanShot 2022-06-10 at 23.37.00](https://github.com/gc-mojoconsole/landscaper/blob/electron/.github/images/Readme/CleanShot%202022-06-10%20at%2023.37.00.gif?raw=true)
 
 #### Grasscutter Plugin Manager
 
