@@ -4,7 +4,8 @@ import {
   GithubOutlined,
   AppstoreAddOutlined,
   SettingOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
+  DatabaseOutlined
 } from '@ant-design/icons';
 import "../styles/layout.css";
 import { withTranslation } from 'react-i18next';
@@ -45,6 +46,7 @@ class LandscaperLayout extends React.Component {
     const {t, onSelect, manager} = this.props;
     const items = [
       getItem(t('Grasscutter'), 'info', <InfoCircleOutlined />),
+      getItem(t('Database'), 'database', <DatabaseOutlined /> ),
       manager? getItem(t('Installed Plugins'), 'plugin', manager.installed.some((pi)=> pi.enabled && pi.hasUpdate())?
          <Badge dot ><AppstoreAddOutlined className='icon-patch'/></Badge>:
          <AppstoreAddOutlined />) : getItem(t('Installed Plugins'), 'plugin', <AppstoreAddOutlined />),

@@ -90,4 +90,25 @@ export default class ElectronBackend{
         let ret = await this.channel.invoke('get-stats', path);
         return ret;
     }
+
+    async getRecordCount(uri, db, coll, query) {
+        return await this.channel.invoke('mongo-count', uri, db, coll, query);
+    }
+
+    async getRecord(uri, db, coll, query, pagenation, options) {
+        return await this.channel.invoke('mongo-find', uri, db, coll, query, pagenation, options);
+    }
+
+    async getDBAggregate(uri, db, coll, aggregate) {
+        return await this.channel.invoke('mongo-aggregate', uri, db, coll, aggregate);
+    }
+
+    async getDBDistinct(uri, db, coll, key) {
+        return await this.channel.invoke('mongo-distinct', uri, db, coll, key);
+    }
+
+    async setDBUri(uri) {
+        return await this.channel.invoke('mongo-seturi', uri);
+    }
+    
 }

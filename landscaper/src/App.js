@@ -4,6 +4,7 @@ import SettingsPage from './pages/settings';
 import PluginPage from './pages/plugin';
 import InfoPage from './pages/info';
 import MarketPage from './pages/market';
+import DatabasePage from './pages/database';
 import ModalWindow from './pages/modal_window';
 import {Spin} from "antd";
 import {withTranslation} from "react-i18next";
@@ -15,6 +16,7 @@ const getView = (view, state)=>{
     case "plugin": return (<PluginPage manager={state.manager}/>);
     case "market": return (<MarketPage manager={state.manager}/>);
     case "setting": return (<SettingsPage manager={state.manager}/>);
+    case "database": return (<DatabasePage manager={state.manager}/>);
     default: 
   }
 }

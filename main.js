@@ -2,8 +2,7 @@ const path = require('path');
 const path_escaped = path;
 
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
-// const isDev = require('electron-is-dev');
-const isDev = false;
+const isDev = require('electron-is-dev');
 const Store = require('electron-store');
 const { electron } = require('process');
 const fs = require('fs');
@@ -11,8 +10,9 @@ const electronStore = new Store();
 const unzipper = require('unzipper');
 const {download} = require('electron-dl');
 const open = require('open');
+const { MongoClient } = require("mongodb");
 
-let mainWindow;
+let mainWindow, mongoclient;
 
 function createWindow() {
   // Create the browser window.
@@ -193,4 +193,51 @@ ipcMain.handle('create-directory', (_, path)=> {
       resolve();
     })
   })
+})
+
+ipcMain.handle('mongo-find', async (_, url, db, collection, query, pagenation, options) => {
+  console.log(pagenation);
+  if (!mongoclient)
+    mongoclient = new MongoClient(url);
+  await mongoclient.connect();
+  const database = mongoclient.db(db);
+  const coll = database.collection(collection);
+  // console.log(coll)
+  let find = coll.find(query, options);
+  if (pagenation) {
+    const {per_page, page_no} = pagenation;
+    find = find.skip(page_no * per_page).limit(per_page);
+  }
+  return await find.toArray();
+})
+
+ipcMain.handle('mongo-count', async (_, url, db, collection, query) => {
+  if (!mongoclient)
+    mongoclient = new MongoClient(url);
+  await mongoclient.connect();
+  const database = mongoclient.db(db);
+  const coll = database.collection(collection);
+  return await coll.countDocuments(query);
+})
+
+ipcMain.handle('mongo-aggregate', async (_, url, db, collection, aggregate)=>{
+  if (!mongoclient)
+  mongoclient = new MongoClient(url);
+  await mongoclient.connect();
+  const database = mongoclient.db(db);
+  const coll = database.collection(collection);
+  return await coll.aggregate(aggregate).toArray();
+})
+
+ipcMain.handle('mongo-distinct', async (_, url, db, collection, column) => {
+  if (!mongoclient)
+  mongoclient = new MongoClient(url);
+  await mongoclient.connect();
+  const database = mongoclient.db(db);
+  const coll = database.collection(collection);
+  return await coll.distinct(column);
+})
+
+ipcMain.handle('mongo-seturi', (_, uri)=> {
+  mongoclient = new MongoClient(uri);
 })

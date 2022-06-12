@@ -185,4 +185,29 @@ export default class Grasscutter extends Watchable{
         let url = await this.getArtifactUrl(this.workflows[0]);
         this.updater = new Updater(this.backend, url, './gc.jar', (e)=> {console.log(e)});
     }
+
+    async getRecordCount(collection, query={}, db="server") {
+        if (!this.backend.getRecordCount) return;
+        return await this.backend.getRecordCount(this.config.databaseInfo[db].connectionUri, this.config.databaseInfo[db].collection, collection, query);
+    }
+
+    async getRecord(collection, {query={}, db="server", pagenation=null, options={}}) {
+        if (!this.backend.getRecordCount) return;
+        return await this.backend.getRecord(this.config.databaseInfo[db].connectionUri, this.config.databaseInfo[db].collection, collection, query, pagenation, options);
+    }
+
+    async getDBAggregate(collection, aggregate, db="server") {
+        if (!this.backend.getRecordCount) return;
+        return await this.backend.getDBAggregate(this.config.databaseInfo[db].connectionUri, this.config.databaseInfo[db].collection, collection, aggregate);
+    }
+
+    async getDBDistinct(collection, key, db="server") {
+        if (!this.backend.getRecordCount) return;
+        return await this.backend.getDBDistinct(this.config.databaseInfo[db].connectionUri, this.config.databaseInfo[db].collection, collection, key);
+    }
+    
+    async setDBUri(uri) {
+        if (!this.backend.getRecordCount) return;
+        return await this.backend.setDBUri(uri);
+    }
 }
