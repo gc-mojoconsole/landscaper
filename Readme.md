@@ -39,6 +39,7 @@ Install from github action build. You may use the following links to get the ins
 
 ##### Developer
 
+* **Setup & Run development environment**
 ```bash
 # clone repo
 git clone https://github.com/gc-mojoconsole/landscaper
@@ -51,6 +52,10 @@ npm install --prefix ./landscaper/
 # run
 npm start # should work on linux & mac os, not tested on windows yet, PR welcome
 ```
+
+* **Contribute to metadatas**
+
+Check our dedicate metadata [repo](https://github.com/gc-mojoconsole/landscaper-depot).
 
 
 
