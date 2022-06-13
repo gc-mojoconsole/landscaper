@@ -1,7 +1,6 @@
 import React from 'react';
 import {withTranslation} from 'react-i18next';
 
-import {Checkbox, Input, Button} from 'antd';
 import Filter from './filter_base';
 
 const aggregate_query = [
