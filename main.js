@@ -36,9 +36,9 @@ function createWindow() {
     win.loadFile('./landscaper/build/index.html');
     ;
   // Open the DevTools.
-  // if (isDev) {
+  if (isDev) {
     win.webContents.openDevTools({ mode: 'detach' });
-  // }
+  }
   mainWindow = win;
 }
 
