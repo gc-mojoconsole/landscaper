@@ -18,14 +18,14 @@ class Filter extends React.Component {
         toggled: {}
     }
     async componentDidMount() {
-        const {manager} = this.props;
-        this.setState({ list: await manager.getDBDistinct(this.props.collection, this.props.column)});
+        const {manager, list} = this.props;
+        this.setState({ list: list?await list():await manager.getDBDistinct(this.props.collection, this.props.column)});
     }
 
     toggle(e, u) {
         const {column, setQuery, parser, query} = this.props;
         let {toggled} = this.state;
-        toggled[u] =  e.target.checked;
+        toggled[parser?parser(u):u] =  e.target.checked;
         this.setState(toggled);
         if (Object.entries(toggled).some(([_, v])=> v)){
             query[column] = {}
@@ -51,16 +51,17 @@ class Filter extends React.Component {
         const {column, query} = props;
         if (query[column] !== undefined && query[column]['$in'] !== undefined) {
             return { toggled: query[column]['$in'].reduce((acc, key)=> {
-                    acc[key.toString()] = true;
+                    acc[key] = true;
                     return acc;
                 }, {}) 
             }
-        }
+        } 
+        return {toggled: {}}
     }
 
     render() {
         const {toggled, search, list} = this.state;
-        const {t, formatter} = this.props;
+        const {t, formatter, parser} = this.props;
         return (
             <div style={styles.outer}>
                 <div style={styles.title}>{t("Filter")}</div>
@@ -69,7 +70,7 @@ class Filter extends React.Component {
                     {list.map((u,idx)=> {
                     let item = formatter? formatter(u) :`${u}`;
                     if (search !== '' && item.toLowerCase().indexOf(search.toLowerCase()) === -1) return null;
-                    return <Checkbox key={idx} onChange={(e)=> this.toggle(e,u)} checked={toggled[u] === true} style={{marginLeft: 0}}>{item}</Checkbox>})}
+                    return <Checkbox key={idx} onChange={(e)=> this.toggle(e,u)} checked={toggled[parser?parser(u):u] === true} style={{marginLeft: 0}}>{item}</Checkbox>})}
                 </div>
                 <div style={styles.action}>
                     <Button onClick={this.clearFilter}>{t("Clear")}</Button>
