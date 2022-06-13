@@ -206,8 +206,14 @@ export default class Grasscutter extends Watchable{
         return await this.backend.getDBDistinct(this.config.databaseInfo[db].connectionUri, this.config.databaseInfo[db].collection, collection, key);
     }
     
-    async setDBUri(uri) {
+    async setDBUri(replace, uri) {
         if (!this.backend.getRecordCount) return;
-        return await this.backend.setDBUri(uri);
+        return await this.backend.setDBUri(replace, uri);
+    }
+
+    async checkDBconnection({uri= null, collection=null, db='server'} = {}) {
+        if (uri === null) uri = this.config.databaseInfo[db].connectionUri
+        if (collection === null) collection = this.config.databaseInfo[db].collection
+        return await this.backend.checkDBconnection(uri, collection, 'players');
     }
 }

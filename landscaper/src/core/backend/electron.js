@@ -107,8 +107,20 @@ export default class ElectronBackend{
         return await this.channel.invoke('mongo-distinct', uri, db, coll, key);
     }
 
-    async setDBUri(uri) {
-        return await this.channel.invoke('mongo-seturi', uri);
+    async setDBUri(replace, uri) {
+        return await this.channel.invoke('mongo-seturi', replace, uri);
     }
-    
+
+    checkDBconnection(uri, db, coll) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                setTimeout(() => resolve(false), 1000);
+                await this.channel.invoke('mongo-find', uri, db, coll, {never: ''})
+                resolve(true);
+            } catch (err) {
+                resolve(false);
+            }
+        })
+    }
+
 }
