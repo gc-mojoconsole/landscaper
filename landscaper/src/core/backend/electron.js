@@ -123,4 +123,8 @@ export default class ElectronBackend{
         })
     }
 
+    async getVersion(){
+        return await this.channel.invoke('get-version');
+    }
+
 }

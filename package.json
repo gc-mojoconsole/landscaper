@@ -47,7 +47,8 @@
         "files": [
             "./landscaper/build/**/*",
             "./src/**/*",
-            "main.js"
+            "main.js",
+            "package.json"
         ]
     }
 }

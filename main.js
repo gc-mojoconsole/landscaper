@@ -11,6 +11,7 @@ const unzipper = require('unzipper');
 const {download} = require('electron-dl');
 const open = require('open');
 const { MongoClient } = require("mongodb");
+const PACKAGE = require('./package.json');
 
 let mainWindow, mongoclient = {};
 
@@ -235,3 +236,5 @@ ipcMain.handle('mongo-distinct', async (_, url, db, collection, column) => {
 ipcMain.handle('mongo-seturi', (_, replace, uri)=> {
   mongoclient[replace] = new MongoClient(uri);
 })
+
+ipcMain.handle('get-version', ()=> {return PACKAGE.version})

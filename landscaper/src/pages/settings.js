@@ -12,7 +12,8 @@ const styles = {
 };
 class Settings extends React.Component {
     state = {
-        language: 'en'
+        language: 'en',
+        version: ''
     }
     manager = null
     constructor(props) {
@@ -26,7 +27,18 @@ class Settings extends React.Component {
             console.log(error);
             this.manager.backend.setData('setting-language','en');
         })
+        this.composeVersion();
     }
+
+    async composeVersion() {
+        const {t} = this.props;
+        let version = `${t("Frontend")}: ${PACKAGE.version}`;
+        if (this.props.manager.backend.getVersion) {
+            version = version + `, ${t("Backend")}: ${await this.props.manager.backend.getVersion()}`;
+        }
+        this.setState({ version });
+    }
+
     changeLanguage(value) {
         this.manager.backend.setData('setting-language',value);
         this.props.i18n.changeLanguage(value);
@@ -39,6 +51,8 @@ class Settings extends React.Component {
     render() {
         const {t} = this.props;
         const path = this.props.manager.path;
+        const {version} = this.state;
+
         const settings = [
             <Row style={styles.row}><div>{t('Language')}</div>
                 <Select value={this.state.language} style={{width: '200px'}} onChange={this.changeLanguage.bind(this)}>
@@ -54,7 +68,7 @@ class Settings extends React.Component {
             </Row>,
             <Row style={styles.row}>
                 <div>{t('Version')}</div>
-                <div>{PACKAGE.version}</div>
+                <div>{version}</div>
             </Row>,
             <Row style={styles.row}>
                 <div>View on Github <GithubOutlined /></div>
