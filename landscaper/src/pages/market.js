@@ -10,6 +10,7 @@ import ReactMarkdown from 'react-markdown';
 import Link from '../components/link';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import path from 'path-browserify';
 
 const { Meta } = Card;
 const {Text} = Typography;
@@ -58,9 +59,9 @@ class MarketPage extends React.Component {
                 let pi = new PluginInsepctor();
                 let folderPath = "";
                 try{
-                    folderPath = await manager.getFolder() + manager.config.folderStructure.plugins;
+                    folderPath = path.join(await manager.getFolder(), manager.config.folderStructure.plugins);
                 } catch(e){
-                    folderPath = await manager.getFolder() + './plugins/';
+                    folderPath = path.join(await manager.getFolder(), 'plugins');
                 }
                 pi.jarPath = folderPath + `/${plugin.name}.jar`;
                 pi.config.name = plugin.name;

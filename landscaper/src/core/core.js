@@ -2,7 +2,7 @@ import Watchable from './watchable';
 import PluginManager from './plugin_manager';
 import {GITHUB_API} from '../config';
 import Updater from './updater';
-
+import path_escaped from 'path-browserify';
 // const delay = async (ms = 1000) => new Promise(resolve => setTimeout(resolve, ms))
 
 export default class Grasscutter extends Watchable{
@@ -70,7 +70,7 @@ export default class Grasscutter extends Watchable{
     async getConfig(){
         let path = await this.getFolder();
         if (!path) throw new Error("config.json not found");
-        return JSON.parse(await this.backend.readFile(path + "/config.json"));
+        return JSON.parse(await this.backend.readFile(path_escaped.join(path, "config.json")));
     }
 
     async loadConfig(){
@@ -81,12 +81,12 @@ export default class Grasscutter extends Watchable{
     async saveConfig(config){
         this.config = config;
         let path = await this.getFolder();
-        await this.backend.writeFile(path + "/config.json", JSON.stringify(config));
+        await this.backend.writeFile(path_escaped.join(path, "config.json"), JSON.stringify(config));
         this.onUpdate();
     }
 
     async scanPlugins(){
-        let folder = `${await this.getFolder()}/${this.config.folderStructure.plugins}`;
+        let folder = path_escaped.join(await this.getFolder(), this.config.folderStructure.plugins);
         this.installed = []
         let files = await this.backend.listDir(folder);
         files.forEach(({entry, type}) => {
