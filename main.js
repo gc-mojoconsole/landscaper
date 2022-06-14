@@ -12,6 +12,7 @@ const {download} = require('electron-dl');
 const open = require('open');
 const { MongoClient } = require("mongodb");
 const PACKAGE = require('./package.json');
+const move = require('./src/utils/move');
 
 let mainWindow, mongoclient = {};
 
@@ -45,7 +46,6 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow);
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -179,7 +179,7 @@ ipcMain.handle('move-file', (_, originalPath, newPath)=> {
   if (!path_escaped.isAbsolute(originalPath)) originalPath = path_escaped.join(app.getPath("temp"), originalPath);
   if (!path_escaped.isAbsolute(newPath)) newPath = path_escaped.join(app.getPath("temp"), newPath);
   return new Promise((resolve, reject)=> {
-    fs.rename(originalPath, newPath, (err)=> {
+    move(originalPath, newPath, (err)=> {
       if (err) reject(err);
       resolve();
     })
@@ -238,3 +238,6 @@ ipcMain.handle('mongo-seturi', (_, replace, uri)=> {
 })
 
 ipcMain.handle('get-version', ()=> {return PACKAGE.version})
+
+
+app.whenReady().then(createWindow);
