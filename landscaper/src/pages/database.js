@@ -4,6 +4,7 @@ import {withTranslation} from 'react-i18next';
 import Accounts from './database/account';
 import Players from './database/player';
 import Gachas from './database/gacha';
+import DatabaseBase from './database/database_base';
 
 const {TabPane} = Tabs;
 
@@ -91,6 +92,13 @@ class Database extends React.Component {
                     </TabPane>
                     <TabPane  key="3" tab={t('Gachas')}>
                         <Gachas manager={manager} />
+                    </TabPane>
+                    <TabPane key="4" tab={t('Counters')}>
+                        <DatabaseBase collection="counters"
+                        columns={[{title: "Item", dataIndex:"_id"}, {title: "Value", dataIndex:"count"}]}
+                        default_columns={[0,1]}
+                        rowKey={(record, idx)=>idx}
+                        manager={manager} />
                     </TabPane>
                 </Tabs>
             }

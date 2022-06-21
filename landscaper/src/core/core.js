@@ -4,6 +4,7 @@ import {GITHUB_API} from '../config';
 import Updater from './updater';
 import path_escaped from 'path-browserify';
 // const delay = async (ms = 1000) => new Promise(resolve => setTimeout(resolve, ms))
+import Cache from './cache_manager';
 
 export default class Grasscutter extends Watchable{
     backend = null;
@@ -22,6 +23,7 @@ export default class Grasscutter extends Watchable{
         super();
         this.backend = backend;
         this.initilize();
+        this.cache = new Cache(this);
     }
 
     async initilize(){
@@ -215,5 +217,9 @@ export default class Grasscutter extends Watchable{
         if (uri === null) uri = this.config.databaseInfo[db].connectionUri
         if (collection === null) collection = this.config.databaseInfo[db].collection
         return await this.backend.checkDBconnection(uri, collection, 'players');
+    }
+
+    async getCachedData(key, options={}) {
+        return await this.cache.get(key, options);
     }
 }
