@@ -27,14 +27,14 @@ function Gacha(props) {
                 const {Avatars, Items} = ret;
                 let tmp = {};
                 Object.entries(Items).map(
-                    ([key, value])=> {
-                        tmp[key] = `${value}`;
-                    }
+                    ([key, value])=> 
+                        tmp[key] = `${value}`
+                    
                 )
                 Object.entries(Avatars).map(
-                    ([key, value])=> {
-                        tmp[key] = `${value}`;
-                    }
+                    ([key, value])=> 
+                        tmp[key] = `${value}`
+                    
                 )
                 setItems(tmp);
             }
