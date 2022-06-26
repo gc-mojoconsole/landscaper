@@ -85,6 +85,7 @@ export default class Grasscutter extends Watchable{
         let path = await this.getFolder();
         await this.backend.writeFile(path_escaped.join(path, "config.json"), JSON.stringify(config));
         this.onUpdate();
+        this.installed.forEach((p)=>p.diagnose());
     }
 
     async scanPlugins(){

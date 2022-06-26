@@ -1,5 +1,5 @@
 import React from 'react';
-import {Descriptions, Collapse, Typography, Button} from 'antd';
+import {Descriptions, Collapse, Typography, Button, Alert} from 'antd';
 import {withTranslation} from 'react-i18next';
 import ConfigEditor from '../components/config_editor';
 import ReactMarkdown from 'react-markdown'
@@ -115,7 +115,26 @@ class PluginInsepctorPage extends React.Component {
                         {simplify_path(pi.jarPath)}
                     </Descriptions.Item>
                 </Descriptions>
-                <Collapse defaultActiveKey={[]} ghost>
+                <Collapse defaultActiveKey={["diagnose"]} ghost>
+                    {pi.metaData.diagnose ?
+                        <Panel header={t("Diagnose")} key="diagnose">
+                            {pi.issues.length === 0? <Alert showIcon type="success" message={t("All check pass!")}/>:
+                            <div style={{
+                                display: "flex", 
+                                gap: '10px',
+                                flexDirection: 'column'
+                            }}>
+                                {pi.issues.map((issue, idx)=> {
+                                    if (typeof issue === "object") {
+                                        return <Alert key={idx} {...issue} message={t(issue.message)} showIcon />
+                                    } else {
+                                        return <Alert key={idx} message={t(issue)} type="error" showIcon />
+                                    }
+                                })}
+                            </div>
+                            }
+                        </Panel>: null
+                    }
                     <Panel header={t("Option")} key="tool">
                         <div style={{display: 'flex', flexWrap:'wrap', flexDirection:'row', gap: '10px 20px'}}>
                             {pi.hasUpdate()? <Button onClick={()=> pi.fetchUpdate.bind(pi)()}>{t("Update")}</Button>: null }
@@ -130,7 +149,7 @@ class PluginInsepctorPage extends React.Component {
 
                     {pi.configContent?
                         <ConfigEditor 
-                            style={{padding: "16px 11px 16px 11px"}}
+                            style={{padding: "0px 11px 2px 11px"}}
                             iconSize={12}
                             refp={child => this.editor=child} 
                             config={pi.configContent} 

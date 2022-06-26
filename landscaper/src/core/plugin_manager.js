@@ -3,6 +3,7 @@ import {Modal, Button} from 'antd';
 import {UPSTREAM_URL, PLUGINS_DEPOT, GITHUB_API} from '../config';
 import i18n from "i18next";
 import {QuestionCircleOutlined} from '@ant-design/icons';
+import Op from './validator';
 
 const {confirm, info} = Modal;
 const FETCH_URL = UPSTREAM_URL + PLUGINS_DEPOT;
@@ -43,6 +44,7 @@ export default class PluginInsepctor{
     github_releases = null;
     backend = null;
     parent = null;
+    issues = [];
 
     async parseJar(path){
         let ret = await this.backend.extractFile(path, 'plugin.json');
@@ -75,6 +77,8 @@ export default class PluginInsepctor{
                 response = await fetch(`${GITHUB_API}/repos/${metaData.github}/${metaData.releases}`);
                 this.github_releases = await response.json();
             }
+
+            this.diagnose();
 
         } catch(e){
             console.log(e);
@@ -123,6 +127,7 @@ export default class PluginInsepctor{
         if (!this.isConfigable()) return;
         this.configContent = config;
         await this.backend.writeFile(this.folderPath + this.configFilename, JSON.stringify(config))
+        this.diagnose();
     }
     
     getGithub(){
@@ -218,6 +223,23 @@ export default class PluginInsepctor{
         await this.backend.moveFile(this.jarPath, newJarPath)
         this.jarPath = newJarPath;
         this.enabled = true;
+        this.onrefresh();
+    }
+
+    async diagnose(){
+        this.issues = [];
+        if (!this.metaData.diagnose) return null
+        this.metaData.diagnose.forEach( async diagnose => {
+            let op = new Op(this, diagnose);
+            await op.resolve()
+            if (op.value === false) {
+                this.appendIssue(op.props.description)
+            }
+        })
+    }
+
+    appendIssue(issue){
+        this.issues.push(issue)
         this.onrefresh();
     }
 }
