@@ -74,7 +74,9 @@ export default class PluginInsepctor{
 
             // fetch release from github
             if (metaData.releases){
-                response = await fetch(`${GITHUB_API}/repos/${metaData.github}/${metaData.releases}`);
+                response = await fetch(`${GITHUB_API}/repos/${metaData.github}/${metaData.releases}`, {
+                    cache: 'no-store'
+                });
                 this.github_releases = await response.json();
             }
 
